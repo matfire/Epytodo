@@ -1,4 +1,4 @@
-#!/home/matteo/Epytodo/bin/python
+#!/home/mgassend/GitHub/Epytodo/bin/python
 
 import sys
 import getopt

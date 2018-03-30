@@ -40,7 +40,7 @@ deactivate () {
 # unset irrelevant variables
 deactivate nondestructive
 
-VIRTUAL_ENV="/home/matteo/Epytodo"
+VIRTUAL_ENV="/home/mgassend/GitHub/Epytodo"
 export VIRTUAL_ENV
 
 _OLD_VIRTUAL_PATH="$PATH"
