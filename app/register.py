@@ -11,21 +11,18 @@ class RegisterForm(Form):
     password = PasswordField('Password', [validators.DataRequired(), validators.EqualTo('confirm', message="Passwords do not match")])
     confirm = PasswordField('Confirm password')
 
-def register_user(form):
+def register_user(form, mysql):
 	name = form.name.data
 	email = form.email.data
 	username = form.email.data
 	password = sha256_crypt.encrypt(str(form.password.data))
-	mysql = MySQL(app)
 
 	#create DictCursor
 	cursor = mysql.connection.cursor()
-	cursor.execute("INSERT INTO user(name, email, username, password) VALUES(%s, %s, %s, %s)", (name, email, username, password))
+	cursor.execute("INSERT INTO User(name, username, email, password) VALUES(%s, %s, %s, %s)", (name, username, email, password))
 
 	#Commit to DB
 	mysql.connection.commit()
 
 	#Close connection
 	cursor.close()
-
-	flash('You are now registered and can log in', 'success')
