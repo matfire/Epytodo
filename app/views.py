@@ -1,5 +1,6 @@
 from app import app
 from .register import RegisterForm, register_user
+from .login import check_user
 from flask_mysqldb import MySQL
 from wtforms import Form, StringField, TextAreaField, PasswordField, validators
 from flask import flash, redirect, url_for, session, logging, request, render_template
@@ -25,7 +26,7 @@ def register():
 	if request.method == 'POST' and form.validate():
 			register_user(form, mysql)
 			flash('You are now registered and can log in', 'success')
-			return 	render_template('login.html')		
+			return 	redirect(url_for('login'))		
 	return render_template('register.html', form=form)
 
 @app.route('/login', methods=['GET', 'POST'])
@@ -33,4 +34,20 @@ def login():
 	if request.method == 'POST':
 		username = request.form['username']
 		password_candidate = request.form['password']
-	return render_template('login.html')
+		result = check_user(username, password_candidate, mysql)
+		if result == 1:
+			error = 'User not found'
+			return render_template('login.html', error=error)
+		elif result == 2:
+			error = 'Incorrect Password'
+			return render_template('login.html', error=error)
+		else:
+			session['logged_in'] = True
+			session['username'] = username
+			flash('You are now logged in', 'success')
+			return redirect(url_for('dashboard'))
+	return render_template('login.html')			
+
+@app.route('/dashboard')
+def dashboard():
+	return render_template('dashboard.html')

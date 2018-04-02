@@ -14,7 +14,7 @@ class RegisterForm(Form):
 def register_user(form, mysql):
 	name = form.name.data
 	email = form.email.data
-	username = form.email.data
+	username = form.username.data
 	password = sha256_crypt.encrypt(str(form.password.data))
 
 	#create DictCursor
