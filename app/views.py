@@ -48,6 +48,9 @@ def login():
 			return redirect(url_for('dashboard'))
 	return render_template('login.html')			
 
-@app.route('/dashboard')
-def dashboard():
-	return render_template('dashboard.html')
+@app.route('/agenda')
+def agenda():
+	if session['logged_in'] == True:
+		return render_template('agenda.html')
+	flash('Error: you need to be logged in order to access this service', 'warning')
+	return redirect(url_for('index'))
