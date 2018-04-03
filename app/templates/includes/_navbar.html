@@ -18,6 +18,9 @@
 	<ul class="nav navbar navbar-right">
     <li><a href="/register">Register</a></li>
     <li><a href="/login">Login</a></li>
+    {% if session.logged_in %}
+    <li><a href='/logout'>Logout</a></li>
+    {% endif %}
 	</ul>
       </div><!--/.nav-collapse -->
     </div>
