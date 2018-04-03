@@ -2,4 +2,28 @@
 
 {% block body %}
     <h1>Dashboard <small>Welcome {{session.username}}</small></h1>
+    <a class="btn btn-success" href="/add_task">Add Task</a>
+    <hr>
+    <table class="table table-striped">
+        <tr>
+            <th>Title</th>
+            <th>Starts On</th>
+            <th>Ends On</th>
+            <th>Status</th>
+        </tr>
+        {% for task in tasks %}
+        <tr>
+            <td>{{task.title}}</td>
+            <td>{{task.begin}}</td>
+            <td>{{task.end}}</td>
+            <td>{{task.status}}</td>
+            <td>
+                <form action="{{url_for('delete', id=task.task_id)}}" method="post">
+                    <input type="hidden" name="_method" value="DELETE">
+                    <input type="submit" value="Delete" class="btn btn-danger">
+                  </form>
+            </td>
+        </tr>
+        {% endfor %}
+    </table>
 {% endblock %}

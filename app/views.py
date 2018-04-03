@@ -1,6 +1,7 @@
 from app import app
 from .register import RegisterForm, register_user
 from .login import check_user
+from .tasks import TaskForm, create_task, get_tasks, delete_task
 from flask_mysqldb import MySQL
 from wtforms import Form, StringField, TextAreaField, PasswordField, validators
 from flask import flash, redirect, url_for, session, logging, request, render_template
@@ -51,13 +52,34 @@ def login():
 @app.route('/agenda')
 def agenda():
 	if session['logged_in'] == True:
-		return render_template('agenda.html')
-	flash('Error: you need to be logged in order to access this service', 'warning')
+		data = get_tasks(mysql)
+		return render_template('agenda.html', tasks=data)
+	flash('Error: you need to be logged in in order to access this service', 'warning')
 	return redirect(url_for('route_home'))
+
+@app.route('/add_task', methods=['GET', 'POST'])
+def add_article():
+	form = TaskForm(request.form)
+	if request.method == 'POST' and form.validate() and session['logged_in'] == True:
+		title = form.title.data
+		start_date = form.start_date.data
+		end_date = form.end_date.data
+		create_task(mysql, title, start_date, end_date)
+		return redirect(url_for('agenda'))
+	elif session['logged_in'] == False:
+		flash('Error: you need to be logged in in order to access this service', 'warning')
+		return redirect(url_for('route_home'))
+	return render_template('add_task.html', form=form)
+
+@app.route('/delete_task/<string:id>', methods=['POST'])
+def delete(id):
+	delete_task(mysql, id)
+	app.logger.info('deleting task')
+	flash('Task deleted', 'success')
+	return redirect(url_for('agenda'))
 
 @app.route('/logout')
 def logout():
-	session['logged_in'] = False
-	session['username'] = ''
+	session.clear()
 	flash('You have successfully disconnected from the session', 'success')
 	return redirect(url_for('route_home'))
