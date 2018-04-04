@@ -1,0 +1,39 @@
+{% extends 'layout.html' %}
+
+{% block body %}
+<div class="panel-group" id="faqAccordion">
+    <div class="panel panel-default ">
+        <div class="panel-heading accordion-toggle question-toggle collapsed" data-toggle="collapse" data-parent="#faqAccordion" data-target="#question0">
+             <h4 class="panel-title">
+                <a href="#" class="ing">Q: What is Epytodo?</a>
+          </h4>
+
+        </div>
+        <div id="question0" class="panel-collapse collapse" style="height: 0px;">
+            <div class="panel-body">
+                 <h5><span class="label label-primary">Answer</span></h5>
+                <p>
+                    Epytodo is a simple todo list created using Flask(python) and basic sql queries
+                </p>
+            </div>
+        </div>
+    </div>
+    <div class="panel panel-default ">
+        <div class="panel-heading accordion-toggle collapsed question-toggle" data-toggle="collapse" data-parent="#faqAccordion" data-target="#question1">
+             <h4 class="panel-title">
+                <a href="#" class="ing">Q: How do we use it?</a>
+          </h4>
+
+        </div>
+        <div id="question1" class="panel-collapse collapse" style="height: 0px;">
+            <div class="panel-body">
+                 <h5><span class="label label-primary">Answer</span></h5>
+
+                <p>
+                    Simply create an account. Then, from your agenda you will be able to create tasks setting a beginning date and an end date
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

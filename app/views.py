@@ -5,8 +5,19 @@ from .tasks import TaskForm, create_task, get_tasks, delete_task
 from flask_mysqldb import MySQL
 from wtforms import Form, StringField, TextAreaField, PasswordField, validators
 from flask import flash, redirect, url_for, session, logging, request, render_template
+from functools import wraps
 
 mysql = MySQL(app)
+
+def is_logged_in(f):
+    @wraps(f)
+    def wrap(*args, **kwargs):
+        if 'logged_in' in session:
+            return f(*args, **kwargs)
+        else:
+            flash('Unauthorized, Please login', 'danger')
+            return redirect(url_for('login'))
+    return wrap
 
 @app.route('/', methods=['GET'])
 @app.route('/index', methods=['GET'])
@@ -50,28 +61,25 @@ def login():
 	return render_template('login.html')			
 
 @app.route('/agenda')
+@is_logged_in
 def agenda():
-	if session['logged_in'] == True:
-		data = get_tasks(mysql)
-		return render_template('agenda.html', tasks=data)
-	flash('Error: you need to be logged in in order to access this service', 'warning')
-	return redirect(url_for('route_home'))
-
+	data = get_tasks(mysql)
+	return render_template('agenda.html', tasks=data)
+	
 @app.route('/add_task', methods=['GET', 'POST'])
+@is_logged_in
 def add_article():
 	form = TaskForm(request.form)
-	if request.method == 'POST' and form.validate() and session['logged_in'] == True:
+	if request.method == 'POST' and form.validate():
 		title = form.title.data
 		start_date = form.start_date.data
 		end_date = form.end_date.data
 		create_task(mysql, title, start_date, end_date)
 		return redirect(url_for('agenda'))
-	elif session['logged_in'] == False:
-		flash('Error: you need to be logged in in order to access this service', 'warning')
-		return redirect(url_for('route_home'))
 	return render_template('add_task.html', form=form)
 
 @app.route('/delete_task/<string:id>', methods=['POST'])
+@is_logged_in
 def delete(id):
 	delete_task(mysql, id)
 	app.logger.info('deleting task')
@@ -79,7 +87,12 @@ def delete(id):
 	return redirect(url_for('agenda'))
 
 @app.route('/logout')
+@is_logged_in
 def logout():
 	session.clear()
 	flash('You have successfully disconnected from the session', 'success')
 	return redirect(url_for('route_home'))
+
+@app.route('/faq')
+def faq():
+	return render_template('faq.html')
