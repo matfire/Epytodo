@@ -4,5 +4,13 @@
     <div class="jumbotron text-center">
         <h1>Welcome to Epytodo</h1>
         <p class="lead">An application to help you plan ahead</p>
+        {% if session.logged_in %}
+        <h3>Welcome Back {{session.username}}</h3>
+        <a href="/agenda" class="btn btn-primary btn-success active" role="button" aria-pressed="true">Agenda</a>
+        {% endif %}
+        {% if not session.logged_in %}
+        <a href="/register" class="btn btn-primary btn-success active" role="button" aria-pressed="true">Register</a>
+        <a href="/login" class="btn btn-primary btn-primary active" role="button" aria-pressed="true">Login</a>
+        {% endif %}
     </div>
 {% endblock %}

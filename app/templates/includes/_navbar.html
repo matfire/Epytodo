@@ -16,8 +16,10 @@
           <li><a href="/faq">FAQ</a></li>
         </ul>
 	<ul class="nav navbar-nav navbar-right">
+    {% if not session.logged_in %}
     <li><a href="/register">Register</a></li>
     <li><a href="/login">Login</a></li>
+    {% endif %}
     {% if session.logged_in %}
     <li><a href='/logout'>Logout</a></li>
     {% endif %}
