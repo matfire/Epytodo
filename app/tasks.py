@@ -1,12 +1,13 @@
 from app import app
 from wtforms import Form, StringField, TextAreaField, PasswordField, DateField, validators
+from datetime import datetime, date
 from flask import flash, redirect, url_for, session, logging, request, render_template
 from flask_mysqldb import MySQL
 
 class TaskForm(Form):
     title = StringField('Title', [validators.Length(min=1, max=200)])
-    start_date = DateField('start date (dd/mm/YYYY)', format='%d/%m/%Y')
-    end_date = DateField('end date (dd/mm/YYYY)', format='%d/%m/%Y')
+    start_date = DateField('start date (dd/mm/YYYY)', format='%d/%m/%Y', validators=[validators.Optional()])
+    end_date = DateField('end date (dd/mm/YYYY)', format='%d/%m/%Y', validators=[validators.Optional()])
 
 def create_task(mysql, title, start_date, end_date):
     cur = mysql.connection.cursor()
@@ -23,10 +24,22 @@ def create_task(mysql, title, start_date, end_date):
     cur.close()
     flash('task added successfully', 'success')
 
+def analyze_time(tasks):
+    for task in tasks:
+        if str(task['begin']).split() <= str(datetime.now().strftime('%Y-%m-%d %H:%M:%S')).split() and str(task['end']).split() > str(datetime.now().strftime('%Y-%m-%d %H:%M:%S')).split():
+            task['status'] = 1
+        elif str(task['end']).split() < str(datetime.now().strftime('%Y-%m-%d %H:%M:%S')).split():
+            task['status'] = 2
+        else:
+            task['status'] = 0
+    return tasks
+
+
 def get_tasks(mysql):
     cur = mysql.connection.cursor()
-    result = cur.execute('SELECT * FROM Task WHERE created_by LIKE %s', [session['username']])
+    cur.execute('SELECT * FROM Task WHERE created_by LIKE %s', [session['username']])
     tasks = cur.fetchall()
+    analyze_time(tasks)
     return tasks
 
 def delete_task(mysql, id):

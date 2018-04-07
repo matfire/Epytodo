@@ -16,7 +16,15 @@
             <td>{{task.title}}</td>
             <td>{{task.begin}}</td>
             <td>{{task.end}}</td>
-            <td>{{task.status}}</td>
+            {% if task.status == 0 %}
+            <td>not started</td>
+            {% endif %}
+            {% if task.status == 1 %}
+            <td>in progress</td>
+            {% endif %}
+            {% if task.status == 2 %}
+            <td>done</td>
+            {% endif %}
             <td>
                 <form action="{{url_for('delete', id=task.task_id)}}" method="post">
                     <input type="hidden" name="_method" value="DELETE">
