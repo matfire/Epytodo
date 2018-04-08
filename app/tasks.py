@@ -15,7 +15,10 @@ def create_task(mysql, title, start_date, end_date):
         end_date_convert = str(end_date)
         cur.execute("INSERT INTO Task(title, created_by, end) VALUES(%s, %s, %s)", (title, session['username'], end_date_convert))
     elif start_date == None and end_date == None:
-        cur.execute("INSERT INTO Task(title, created_by VALUES(%s, %s)", (title, session['username']))
+        cur.execute("INSERT INTO Task(title, created_by) VALUES(%s, %s)", (title, session['username']))
+    elif start_date != None and end_date == None:
+        start_date_convert = str(start_date)
+        cur.execute("INSERT INTO Task(title, created_by, begin) VALUES(%s, %s, %s)", (title, session['username'], start_date_convert))
     else:
         start_date_convert = str(start_date)
         end_date_convert = str(end_date)
